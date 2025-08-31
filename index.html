@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>🐺 Gigi AI Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .chat-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .chat-header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .status {
+            font-size: 0.9em;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .api-setup {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px;
+            display: block;
+        }
+        
+        .api-setup h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .api-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .api-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .api-input button {
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .api-input button:hover {
+            background: #45a049;
+        }
+        
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            flex-direction: row-reverse;
+        }
+        
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+        
+        .user .message-avatar {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .gigi .message-avatar {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+        
+        .system .message-avatar {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .message-content {
+            background: white;
+            border-radius: 18px;
+            padding: 12px 16px;
+            max-width: 70%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .user .message-content {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .gigi .message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .system .message-content {
+            background: #ffebee;
+            color: #d32f2f;
+            border: 1px solid #ffcdd2;
+        }
+        
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .message-input:focus {
+            border-color: #4CAF50;
+        }
+        
+        .send-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        
+        .send-button:hover {
+            transform: scale(1.1);
+        }
+        
+        .send-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .typing-indicator.show {
+            display: flex;
+        }
+        
+        .typing-dots {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: typing 1.5s infinite;
+        }
+        
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+        
+        .hidden { display: none; }
+        
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.8em;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>🐺 Gigi AI Assistant</h1>
+            <div class="status" id="status">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Potrebujem Groq API kľúč</span>
+            </div>
+            <div class="stats" id="stats">
+                Requestov dnes: <span id="requestCount">0</span>/14400 | 
+                Tokenov: <span id="tokenCount">0</span>/500k
+            </div>
+        </div>
+        
+        <div class="api-setup" id="apiSetup">
+            <h3>🔑 Nastavenie Groq API</h3>
+            <p>1. Choďte na <a href="https://console.groq.com/" target="_blank">console.groq.com</a></p>
+            <p>2. Vytvorte si bezplatný účet</p>
+            <p>3. Vygenerujte API kľúč v sekcii "API Keys"</p>
+            <p>4. Vložte kľúč sem:</p>
+            <div class="api-input">
+                <input type="password" id="apiKey" placeholder="gsk_...">
+                <button onclick="saveApiKey()">Uložiť</button>
+            </div>
+        </div>
+        
+        <div class="messages" id="messages">
+            <div class="message gigi">
+                <div class="message-avatar">🐺</div>
+                <div class="message-content">
+                    Ahoj! Som Gigi, váš AI asistent poháňaný Groq API. 
+                    Aby som mohol fungovať, potrebujem váš Groq API kľúč. 
+                    Je to bezplatné a super rýchle! ⚡
+                </div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="message-avatar">🐺</div>
+            <div class="message-content">
+                Gigi píše
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <input type="text" class="message-input" id="messageInput" 
+                   placeholder="Napíšte správu pre Gigi..." disabled>
+            <button class="send-button" id="sendButton" onclick="sendMessage()" disabled>
+                ➤
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let apiKey = null;
+        let requestCount = 0;
+        let tokenCount = 0;
+        
+        // Načítať uložené štatistiky
+        function loadStats() {
+            const saved = localStorage.getItem('gigiStats');
+            if (saved) {
+                const stats = JSON.parse(saved);
+                const today = new Date().toDateString();
+                if (stats.date === today) {
+                    requestCount = stats.requests || 0;
+                    tokenCount = stats.tokens || 0;
+                }
+            }
+            updateStats();
+        }
+        
+        // Uložiť štatistiky
+        function saveStats() {
+            const stats = {
+                date: new Date().toDateString(),
+                requests: requestCount,
+                tokens: tokenCount
+            };
+            localStorage.setItem('gigiStats', JSON.stringify(stats));
+        }
+        
+        // Aktualizovať zobrazenie štatistík
+        function updateStats() {
+            document.getElementById('requestCount').textContent = requestCount;
+            document.getElementById('tokenCount').textContent = tokenCount.toLocaleString();
+        }
+        
+        // Uložiť API kľúč
+        function saveApiKey() {
+            const key = document.getElementById('apiKey').value.trim();
+            if (key.startsWith('gsk_') && key.length > 20) {
+                apiKey = key;
+                localStorage.setItem('groqApiKey', key);
+                document.getElementById('apiSetup').classList.add('hidden');
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendButton').disabled = false;
+                updateStatus('ready', 'Pripravený na chat! 🚀');
+                document.getElementById('messageInput').focus();
+                
+                addMessage('system', '✅ API kľúč bol úspešne uložený! Môžete začať chatovať s Gigi.');
+            } else {
+                alert('Neplatný API kľúč. Musí začínať "gsk_" a byť dostatočne dlhý.');
+            }
+        }
+        
+        // Aktualizovať status
+        function updateStatus(type, text) {
+            const statusText = document.getElementById('statusText');
+            const statusDot = document.getElementById('statusDot');
+            
+            statusText.textContent = text;
+            
+            statusDot.style.background = {
+                'ready': '#4CAF50',
+                'thinking': '#FF9800', 
+                'error': '#f44336',
+                'offline': '#9E9E9E'
+            }[type] || '#9E9E9E';
+        }
+        
+        // Pridať správu do chatu
+        function addMessage(sender, content) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            const avatar = {
+                'user': '👤',
+                'gigi': '🐺',
+                'system': '⚙️'
+            }[sender] || '🤖';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">${content}</div>
+            `;
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // Odoslať správu
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || !apiKey) return;
+            
+            addMessage('user', message);
+            input.value = '';
+            input.disabled = true;
+            document.getElementById('sendButton').disabled = true;
+            
+            // Zobraziť typing indikátor
+            document.getElementById('typingIndicator').classList.add('show');
+            updateStatus('thinking', 'Gigi premýšľa...');
+            
+            try {
+                // Debug info
+                console.log('Sending request to Groq API...');
+                console.log('API Key preview:', apiKey.substring(0, 10) + '...');
+                
+                const requestData = {
+                    model: 'llama-3.1-8b-instant',
+                    messages: [
+                        {
+                            role: 'system',
+                            content: `Si Gigi, priateľský AI asistent vo forme psíka. Tvoja osobnosť:
+                            - Si veselý, lojálny a nápomocný ako skutočný psík
+                            - Občas použiješ psie emotikony 🐺🐕
+                            - Odpovedáš v slovenčine
+                            - Si inteligentný ale zostávaš priateľský
+                            - Rád pomáhaš so všetkým od otázok po kódovanie
+                            - Niekedy sa správaš trochu "psovsky" - si nadšený a energický`
+                        },
+                        {
+                            role: 'user',
+                            content: message
+                        }
+                    ],
+                    temperature: 0.7,
+                    max_tokens: 1000
+                };
+                
+                console.log('Request data:', requestData);
+                
+                const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${apiKey}`,
+                        'Content-Type': 'application/json',
+                        'Origin': window.location.origin
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+                
+                if (!response.ok) {
+                    let errorMessage;
+                    try {
+                        const error = await response.json();
+                        errorMessage = error.error?.message || `HTTP ${response.status}`;
+                    } catch {
+                        errorMessage = `HTTP ${response.status} - ${response.statusText}`;
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                const aiResponse = data.choices[0].message.content;
+                
+                // Aktualizovať štatistiky
+                requestCount++;
+                tokenCount += data.usage.total_tokens;
+                saveStats();
+                updateStats();
+                
+                document.getElementById('typingIndicator').classList.remove('show');
+                addMessage('gigi', aiResponse);
+                updateStatus('ready', 'Pripravený na ďalšiu správu! 🐾');
+                
+            } catch (error) {
+                console.error('Fetch error:', error);
+                document.getElementById('typingIndicator').classList.remove('show');
+                
+                let errorMsg = error.message;
+                let troubleshootMsg = '';
+                
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMsg = 'Problém s pripojením k Groq API';
+                    troubleshootMsg = `
+                        <br>🔧 <strong>Možné riešenia:</strong><br>
+                        1. Skontrolujte internetové pripojenie<br>
+                        2. Vypnite blokátory reklám/skriptov<br>
+                        3. Nahrať súbor na GitHub Pages/Netlify<br>
+                        4. Spustiť cez lokálny server (http-server)
+                    `;
+                } else if (error.message.includes('401')) {
+                    errorMsg = 'Neplatný API kľúč';
+                    troubleshootMsg = '<br>Skontrolujte API kľúč v Groq console.';
+                } else if (error.message.includes('429')) {
+                    errorMsg = 'Dosiahli ste limit requestov';
+                    troubleshootMsg = '<br>Počkajte chvíľu alebo skúste zajtra.';
+                }
+                
+                addMessage('system', `❌ ${errorMsg}${troubleshootMsg}`);
+                updateStatus('error', 'Chyba pri komunikácii');
+                
+            } finally {
+                input.disabled = false;
+                document.getElementById('sendButton').disabled = false;
+                input.focus();
+            }
+        }
+        
+        // Enter na odoslanie
+        document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        // Načítanie pri štarte
+        window.addEventListener('load', function() {
+            loadStats();
+            
+            // Skúsiť načítať uložený API kľúč
+            const savedKey = localStorage.getItem('groqApiKey');
+            if (savedKey) {
+                document.getElementById('apiKey').value = savedKey;
+                saveApiKey();
+            }
+        });
+    </script>
+</body>
+</html>
