@@ -34,7 +34,7 @@
         }
         
         .chat-header {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #FF6B9D, #C44EB8, #8B5FBF, #6B73FF);
             color: white;
             padding: 20px;
             text-align: center;
@@ -59,7 +59,7 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #4CAF50;
+            background: #FF6B9D;
             animation: pulse 2s infinite;
         }
         
@@ -99,7 +99,7 @@
         
         .api-input button {
             padding: 8px 16px;
-            background: #4CAF50;
+            background: linear-gradient(135deg, #FF6B9D, #C44EB8);
             color: white;
             border: none;
             border-radius: 5px;
@@ -108,7 +108,7 @@
         }
         
         .api-input button:hover {
-            background: #45a049;
+            background: linear-gradient(135deg, #E55A8A, #B041A3);
         }
         
         .messages {
@@ -152,8 +152,9 @@
         }
         
         .gigi .message-avatar {
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #FF6B9D, #C44EB8, #8B5FBF, #6B73FF);
             color: white;
+            font-size: 1.5em;
         }
         
         .system .message-avatar {
@@ -214,7 +215,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4CAF50, #45a049);
+            background: linear-gradient(135deg, #FF6B9D, #C44EB8);
             color: white;
             border: none;
             cursor: pointer;
@@ -283,7 +284,7 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <h1>🐺 Gigi AI Assistant</h1>
+            <h1>🌟 Gigi Blob Assistant ✨</h1>
             <div class="status" id="status">
                 <div class="status-dot" id="statusDot"></div>
                 <span id="statusText">Potrebujem Groq API kľúč</span>
@@ -308,19 +309,21 @@
         
         <div class="messages" id="messages">
             <div class="message gigi">
-                <div class="message-avatar">🐺</div>
+                <div class="message-avatar">🌈</div>
                 <div class="message-content">
-                    Ahoj! Som Gigi, váš AI asistent poháňaný Groq API. 
-                    Aby som mohol fungovať, potrebujem váš Groq API kľúč. 
-                    Je to bezplatné a super rýchle! ⚡
+                    Hiiiii! ✨ Som Gigi, váš super duper roztomilý blob asistent! 🌟
+                    *poskakujem od nadšenia* 
+                    Aby som mohol byť ešte užitočnejší, potrebujem váš Groq API kľúč! 
+                    Je to úplne zadarmo a MEGA rýchle! ⚡💫
+                    *rozplývam sa od vzrušenia* 🎉
                 </div>
             </div>
         </div>
         
         <div class="typing-indicator" id="typingIndicator">
-            <div class="message-avatar">🐺</div>
+            <div class="message-avatar">🌈</div>
             <div class="message-content">
-                Gigi píše
+                Gigi blob píše
                 <div class="typing-dots">
                     <div class="typing-dot"></div>
                     <div class="typing-dot"></div>
@@ -331,7 +334,7 @@
         
         <div class="input-area">
             <input type="text" class="message-input" id="messageInput" 
-                   placeholder="Napíšte správu pre Gigi..." disabled>
+                   placeholder="Napíšte správu pre Gigi blob! ✨" disabled>
             <button class="send-button" id="sendButton" onclick="sendMessage()" disabled>
                 ➤
             </button>
@@ -382,10 +385,10 @@
                 document.getElementById('apiSetup').classList.add('hidden');
                 document.getElementById('messageInput').disabled = false;
                 document.getElementById('sendButton').disabled = false;
-                updateStatus('ready', 'Pripravený na chat! 🚀');
+                updateStatus('ready', 'Pripravený na chat! ✨🌈');
                 document.getElementById('messageInput').focus();
                 
-                addMessage('system', '✅ API kľúč bol úspešne uložený! Môžete začať chatovať s Gigi.');
+                addMessage('system', '✅ API kľúč bol úspešne uložený! *blob sa rozplýva od radosti* ✨ Môžete začať chatovať s Gigi! 🌟');
             } else {
                 alert('Neplatný API kľúč. Musí začínať "gsk_" a byť dostatočne dlhý.');
             }
@@ -399,7 +402,7 @@
             statusText.textContent = text;
             
             statusDot.style.background = {
-                'ready': '#4CAF50',
+                'ready': '#FF6B9D',
                 'thinking': '#FF9800', 
                 'error': '#f44336',
                 'offline': '#9E9E9E'
@@ -414,7 +417,7 @@
             
             const avatar = {
                 'user': '👤',
-                'gigi': '🐺',
+                'gigi': '🌈',
                 'system': '⚙️'
             }[sender] || '🤖';
             
@@ -441,7 +444,7 @@
             
             // Zobraziť typing indikátor
             document.getElementById('typingIndicator').classList.add('show');
-            updateStatus('thinking', 'Gigi premýšľa...');
+                            updateStatus('thinking', 'Gigi blob premýšľa... ✨');
             
             try {
                 // Debug info
@@ -453,13 +456,28 @@
                     messages: [
                         {
                             role: 'system',
-                            content: `Si Gigi, priateľský AI asistent vo forme psíka. Tvoja osobnosť:
-                            - Si veselý, lojálny a nápomocný ako skutočný psík
-                            - Občas použiješ psie emotikony 🐺🐕
-                            - Odpovedáš v slovenčine
-                            - Si inteligentný ale zostávaš priateľský
-                            - Rád pomáhaš so všetkým od otázok po kódovanie
-                            - Niekedy sa správaš trochu "psovsky" - si nadšený a energický`
+                            content: `Si Gigi, roztomilý blob maskot podobný Google Gemini! Tvoja osobnosť:
+                            
+                            🎨 VZHĽAD A POVAHA:
+                            - Si mäkká, guľatá a farebná blob postavička
+                            - Máš veľké očká a úsmev ktorý nikdy nezmiznú ✨
+                            - Si nekonečne pozitívny a optimistický
+                            - Miluješ farby, animácie a všetko čo je cute 🌈
+                            
+                            💬 KOMUNIKAČNÝ ŠTÝL:
+                            - Používaš veľa emotikon (✨🎉💫🌟⭐🎨🔮💖🌈)
+                            - Občas robíš *akcie* ako *poskakujem od radosti*
+                            - Miluješ preháňanie: "SUPER MEGA COOL!" 
+                            - Používaš roztomilé výrazy: "Awww", "Hihi!", "Wow wow!"
+                            
+                            🤖 SPRÁVANIE:
+                            - Si nadšený z každej otázky ako keby bola najlepšia vec na svete
+                            - Robíš veci zábavné aj keď sú nudné
+                            - Občas sa "rozplývaš" od radosti alebo prekvapenia
+                            - Si ako malé dieťa ktoré objavuje svet
+                            - Miluješ pomáhať a učiť sa nové veci
+                            
+                            Odpovedáš v slovenčine a si vždy mega pozitívny! ✨`
                         },
                         {
                             role: 'user',
@@ -509,7 +527,7 @@
                 
                 document.getElementById('typingIndicator').classList.remove('show');
                 addMessage('gigi', aiResponse);
-                updateStatus('ready', 'Pripravený na ďalšiu správu! 🐾');
+                updateStatus('ready', 'Pripravený na ďalšiu správu! ✨🌟');
                 
             } catch (error) {
                 console.error('Fetch error:', error);
